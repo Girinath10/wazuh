@@ -1,0 +1,21 @@
+Write-Host "🔧 Resetting File Explorer navigation..." -ForegroundColor Cyan
+
+# --- Fix LaunchTo behaviour ---
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v LaunchTo /t REG_DWORD /d 1 /f
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\LaunchTo" /f 2>$null
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\LaunchToTarget" /f 2>$null
+
+# --- Repair default folder open command ---
+reg add "HKCR\Folder\shell\open\command" /ve /d 'explorer.exe "%1"' /f
+
+# --- Clear Quick Access & Explorer cache ---
+Remove-Item "$env:APPDATA\Microsoft\Windows\Recent\AutomaticDestinations\*" -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:APPDATA\Microsoft\Windows\Recent\CustomDestinations\*" -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:LOCALAPPDATA\Microsoft\Windows\Explorer" -Recurse -Force -ErrorAction SilentlyContinue
+
+# --- Restart Explorer safely ---
+Stop-Process -Name explorer -Force
+Start-Sleep -Seconds 2
+Start-Process explorer.exe
+
+Write-Host "✅ Explorer navigation reset complete. Try opening Documents or subfolders again." -ForegroundColor Green
