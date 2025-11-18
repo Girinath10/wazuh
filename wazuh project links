@@ -6,3 +6,11 @@ FIM link : https://documentation.wazuh.com/current/user-manual/capabilities/file
 
 Github link MITRE ID :
 https://github.com/socfortress/Wazuh-Rules/tree/main/Windows_Sysmon
+
+
+Wazuh custom rules format : Why this works?
+
+➡ Sysmon sets:
+RuleName: technique_id=T1204,technique_name=User Execution
+
+➡ So Wazuh matches the field:
