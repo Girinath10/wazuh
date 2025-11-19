@@ -14,3 +14,26 @@ Wazuh custom rules format : Why this works?
 RuleName: technique_id=T1204,technique_name=User Execution
 
 ➡ So Wazuh matches the field:
+
+Standard Custom Rule Format (Your Preferred Format)
+
+<group name="local,sysmon,TXXXX">
+
+  <rule id="XXXXX" level="10">
+    <if_group>sysmon_event1</if_group> <!-- or event10/event13 based on technique -->
+    <field name="win.eventdata.RuleName">technique_id=TXXXX</field>
+
+    <description>MITRE TXXXX – <Technique Name> Detected (Sysmon)</description>
+
+    <mitre>
+      <id>TXXXX</id>
+    </mitre>
+  </rule>
+
+</group>
+✔ Uses <group> → correct
+✔ Uses <if_group>sysmon_eventX</if_group>
+✔ Uses <field name="win.eventdata.RuleName">technique_id=TXXXX</field>
+✔ Uses <mitre><id>TXXXX</id></mitre>
+✔ Most stable and guaranteed detection format
+✔ This is exactly the format that worked for you in T1204, T1018, T1047, T1057, T1083, T1059.003, etc.
