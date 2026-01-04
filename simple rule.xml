@@ -1,0 +1,235 @@
+c/rules# cat simple_rule.xml 
+
+<!-- T1648 - Exploit Public-Facing Application (Serverless/Web Shell) -->
+<group name="local,sysmon,T1648">
+  <rule id="107063" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(w3wp\.exe|httpd\.exe|nginx\.exe|tomcat\.exe|java\.exe|python\.exe|node\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(cmd\.exe|powershell\.exe|whoami|net user|ipconfig|curl|wget|certutil|bitsadmin|Invoke-Expression|eval\(|base64_decode)</field>
+    <description>MITRE T1648/T1190 – Exploit Public-Facing Application (Web Shell / Remote Code Execution)</description>
+    <mitre>
+      <id>T1648</id>
+      <id>T1190</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1602 - Wide Compilation (Obfuscation) -->
+<group name="local,sysmon,T1602">
+  <rule id="107061" level="13">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|msbuild\.exe|csc\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(csc.*\/platform|msbuild.*Debug|\/unsafe.*obfuscate|\/target:exe.*temp|widechar.*compile|base64.*assembly)</field>
+    <description>MITRE T1602 – Wide Compilation (Obfuscation via MSBuild/CSC compiler abuse)</description>
+    <mitre>
+      <id>T1602</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1207 - Rogue Domain Controller -->
+<group name="local,sysmon,T1207">
+  <rule id="107060" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|certutil\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(certlm.pfx|DCShadow|ntdsutil.*create|ldifde.*add|New-ADComputer.*Replica|dcsync|SAMR.*Bind|Replication.*Metadata)</field>
+    <description>MITRE T1207 – Rogue Domain Controller (DCShadow/Rogue DC Registration)</description>
+    <mitre>
+      <id>T1207</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1484.002 - Domain Policy Modification: Group Policy -->
+<group name="local,sysmon,T1484">
+  <rule id="107058" level="13">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|gpedit\.msc|gpupdate\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(gpedit|New-GPLink|Set-GPLink|Set-GPRegistryValue|GroupPolicyObject.*Modify|SYSVOL.*ScheduledTasks\.xml|GptTmpl\.inf|CN=Policies)</field>
+    <description>MITRE T1484.002 – Domain Policy Modification: Group Policy (GPO editing/linking abuse)</description>
+    <mitre>
+      <id>T1484.002</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1556.001 - Modify Authentication Process: Domain Controller -->
+<group name="local,sysmon,T1556">
+  <rule id="155601" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|mimikatz\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(dcsync|lsadump::dcsync|ReplicationGetChange|krbtgt.*ntds|Get-ADDomainController|SAMR.*Connect)</field>
+    <description>MITRE T1556.001 – Modify Authentication Process: Domain Controller (DCSync Attack)</description>
+    <mitre>
+      <id>T1556.001</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1547.015 - Boot/Logon Autostart: Accessibility Features -->
+<group name="local,sysmon,T1547">
+  <rule id="107055" level="12">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|reg\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(Active Accessibility.*ATConfig|Accessibility.*Configuration|sethc\.exe|utilman\.exe|magnify\.exe|winlogon.*Shell)</field>
+    <description>MITRE T1547.015 – Boot/Logon Autostart: Accessibility Features (StickyKeys/Narrator Registry Abuse)</description>
+    <mitre>
+      <id>T1547.015</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1601.001 - Modify Process Memory: Reflection Loading -->
+<group name="local,sysmon,T1601">
+  <rule id="107054" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|rundll32\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(VirtualAlloc.*Executable|memcpy.*VirtualProtect|ReflectiveLoader|Assembly\.Load|PELoader|shellcode.*execute)</field>
+    <description>MITRE T1601.001 – Modify Process Memory: Reflection Loading (VirtualAlloc + memcpy + VirtualProtect)</description>
+    <mitre>
+      <id>T1601.001</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1608.001 - Dynamic API Resolution -->
+<group name="local,sysmon,T1608">
+  <rule id="107050" level="13">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|rundll32\.exe)$</field>
+<field name="win.eventdata.commandLine" type="pcre2">(?i)(LoadLibraryA?\(|GetProcAddress\(|GetModuleHandleA?\(|VirtualAllocEx|VirtualProtect)</field>
+    <description>MITRE T1608.001 – Dynamic API Resolution (LoadLibrary + GetProcAddress usage)</description>
+    <mitre>
+      <id>T1608.001</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1621 - Multi-Stage Artifact Loading -->
+<group name="local,sysmon,T1621">
+  <rule id="107049" level="13">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)rundll32\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(shell32\.dll.*ShellExec_RunDLL|javascript|vbscript)</field>
+    <description>MITRE T1621 – Multi-Stage Artifact Loading (rundll32 shell32.dll,ShellExec_RunDLL)</description>
+    <mitre>
+      <id>T1621</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1036.005 - Masquerading: Match Legit Name -->
+<group name="local,sysmon,T1036">
+  <rule id="107047" level="13">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)cmd\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)dir.*(System32|svchost|lsass|winlogon)</field>
+    <description>MITRE T1036.005 – Masquerading: Match Legit Name (dir System32/svchost recon)</description>
+    <mitre>
+      <id>T1036.005</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1010 - Application Window Discovery -->
+<group name="local,sysmon,T1010">
+  <rule id="107046" level="12">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)tasklist\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)tasklist.*(/v|/verbose|/fo csv)</field>
+    <description>MITRE T1010 – Application Window Discovery (tasklist /v /fo csv)</description>
+    <mitre>
+      <id>T1010</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1136.001 - Create Account: Local Account -->
+<group name="local,sysmon,T1136">
+  <rule id="107042" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)net\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)user.*(/add|\/add)</field>
+    <description>MITRE T1136.001 – Local Account Creation (net user hacker /add)</description>
+    <mitre>
+      <id>T1136.001</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1069.001 - Permission Groups Discovery: Local Groups -->
+<group name="local,sysmon,T1069">
+  <rule id="107041" level="12">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)net\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)localgroup.*(administrators|admins|administrators|power|backup)</field>
+    <description>MITRE T1069.001 – Local Groups Discovery (net localgroup administrators)</description>
+    <mitre>
+      <id>T1069.001</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1556.002 - Password Policy Discovery -->
+<group name="local,sysmon,T1556">
+  <rule id="155602" level="12">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)net\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)accounts.*minpwlen|minpwlen</field>
+    <description>MITRE T1556.002 – Password Policy Discovery via net accounts</description>
+    <mitre>
+      <id>T1556.002</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1546.015 - COM Hijacking -->
+<group name="local,sysmon,T1546">
+  <rule id="154615" level="12">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)reg\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)ms-settings.*Shell.*Open.*command|HKCU\\Software\\Classes\\ms-settings</field>
+    <description>MITRE T1546.015 – COM Hijacking via ms-settings registry modification</description>
+    <mitre>
+      <id>T1546.015</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1622 - Debugger Evasion -->
+<group name="local,sysmon,T1622">
+  <rule id="107010" level="12">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(tasklist.*(debugger|ollydbg|x64dbg|ida|windbg)|wmic.*debug)</field>
+    <description>MITRE T1622 – Debugger Evasion (tasklist/wmic debugger checks)</description>
+    <mitre><id>T1622</id></mitre>
+  </rule>
+  
+  <rule id="107011" level="13">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)findstr.*(debugger|debug|olly|windbg|x64dbg)</field>
+    <description>MITRE T1622 – Advanced Debugger Evasion (findstr debugger hunting)</description>
+    <mitre><id>T1622</id></mitre>
+  </rule>
+</group>
+
+
+<group name="local,sysmon,T1546">
+  <rule id="107027" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)reg\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)Image File Execution Options.*Debugger</field>
+    <description>MITRE T1546.012 – IFEO Debugger Hijack via reg.exe</description>
+    <mitre>
+      <id>T1546.012</id>
+    </mitre>
+  </rule>
+</group>
