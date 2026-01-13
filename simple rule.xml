@@ -1,5 +1,20 @@
 c/rules# cat simple_rule.xml 
 
+<!-- T1499 - Endpoint Denial of Service (Resource Exhaustion/Fork Bomb) -->
+<group name="local,sysmon,T1499">
+  <rule id="107065" level="13">
+    <if_group>sysmon</if_group>
+ <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|wscript\.exe|cscript\.exe)$</field>
+<field name="win.eventdata.commandLine" type="pcre2">(?i)(%0\|%0|:s.*goto s|Start-Process.*-NoNewWindow|while\(1\)\{fork|while\(\$true\)\{start|Invoke-WebRequest.*-InFile.*large|dd if=/dev/zero)</field>
+    <description>MITRE T1499 – Endpoint Denial of Service (Fork Bomb/Resource Exhaustion)</description>
+    <mitre>
+      <id>T1499</id>
+    </mitre>
+  </rule>
+</group>
+
+
+
 <!-- T1648 - Exploit Public-Facing Application (Serverless/Web Shell) -->
 <group name="local,sysmon,T1648">
   <rule id="107063" level="14">
