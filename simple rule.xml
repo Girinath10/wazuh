@@ -1,5 +1,19 @@
 c/rules# cat simple_rule.xml 
 
+
+<!-- T1620 - Reflective Code Loading (CMD Test Commands) -->
+<group name="local,sysmon,T1620">
+  <rule id="1071620" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)cmd\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(powershell.*-e.*(Assembly\.Load|FromBase64String|Convert\.FromBase64String)|powershell.*IEX.*base64|rundll32.*javascript.*OpenURL|certutil.*-decode.*cmd.*\/c.*powershell|for.*\/f.*"tokens.*=.*"powershell.*-w hidden.*IEX|reflective|ReflectiveLoader|PELoader|Donut|shellcode.*(?:load|exec|inject))</field>
+    <description>MITRE T1620 – Reflective Code Loading (Advanced CMD triggered PowerShell reflection/memory load)</description>
+    <mitre>
+      <id>T1620</id>
+    </mitre>
+  </rule>
+</group>
+
 <!-- T1499 - Endpoint Denial of Service (Resource Exhaustion/Fork Bomb) -->
 <group name="local,sysmon,T1499">
   <rule id="107065" level="13">
