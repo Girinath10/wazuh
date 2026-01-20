@@ -1,0 +1,233 @@
+~# cat simple_rule.xml 
+<!-- T1592.002 - AD User Enumeration (Lab Trigger - Works Everywhere) -->
+<group name="local,sysmon,T1592">
+<rule id="105902" level="14">
+<if_group>sysmon</if_group>
+<field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+<field name="win.eventdata.commandLine" type="pcre2">(?i)(wmic.*useraccount.*get.*name|net user|dsquery.*user|findstr /i "smtp"|type.*pst|dir.*\.pst.*email|get-aduser.*mail|whoami.*user)</field>
+<description>MITRE T1592.002 – Gather Victim Identity Information: Email Addresses (AD/User enumeration)</description>
+<mitre>
+<id>T1592.002</id>
+</mitre>
+</rule>
+
+<!-- T1592.002 - Exchange Email Enumeration (Triggers Despite Errors) -->
+<rule id="105903" level="14">
+<if_group>sysmon</if_group>
+<field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+<field name="win.eventdata.commandLine" type="pcre2">(?i)(mailtip.*query|get-mailbox|get-recipient|Get-DistributionGroupMember.*email|outlook.*dump.*contacts|export.*contacts.*csv|address.*list.*email)</field>
+<description>MITRE T1592.002 – Gather Victim Identity Information: Email Addresses (Exchange/AD email enumeration)</description>
+<mitre>
+<id>T1592.002</id>
+</mitre>
+</rule>
+</group>
+
+
+<!-- T1590 - Gather Victim Network Information -->
+<group name="local,sysmon,T1590">
+  <rule id="101590" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(net view|arp -a|route print|ipconfig.*all|get-netneighbor|netstat -an|Test-NetConnection.*range|network.*recon|lan.*map|discover.*hosts)</field>
+    <description>MITRE T1590 – Gather Victim Network Information (Network enumeration/reconnaissance)</description>
+    <mitre>
+      <id>T1590</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1601 - Modify System Image: Patch System Image -->
+<group name="local,sysmon,T1601">
+  <rule id="101601" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(patch.*image|system-image.*modify|boot.*image.*update|dism.*image|imagex.*apply|wimlib.*update|modify.*os.*image|upgrade.*firmware.*patch)</field>
+    <description>MITRE T1601 – Modify System Image: Patch System Image (OS image manipulation)</description>
+    <mitre>
+      <id>T1601</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1598 - Phishing for Information -->
+<group name="local,sysmon,T1598">
+  <rule id="101598" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(phish|phishing.*(?:kit|page|email|credential)|spearphish|smishing|vishing|fake.*login|spoof.*email|credential.*harvest|password.*spray|otp.*bypass)</field>
+    <description>MITRE T1598 – Phishing for Information (Phishing kit deployment/credential harvesting)</description>
+    <mitre>
+      <id>T1598</id>
+    </mitre>
+  </rule>
+</group>
+
+
+
+<!-- T1595.001 - Active Scanning: Scanning IP Blocks -->
+<group name="local,sysmon,T1595">
+  <rule id="101595" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|nmap\.exe|masscan\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(nmap.*(?:-sP|-sn|-sS|192\.168|10\.0|172\.(1[6-9]|2[0-9]|3[01])|scan.*range|\/24|\/16|\/8|ping.*sweep))</field>
+    <description>MITRE T1595.001 – Active Scanning: Scanning IP Blocks (Nmap IP range scanning)</description>
+    <mitre>
+      <id>T1595.001</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1592.001 - Gather Victim Identity Information: Credentials -->
+<group name="local,sysmon,T1592">
+  <rule id="101592" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(la.*file|lsass.*dump|procdump.*lsass|mimikatz|sekurlsa|pwdump|secretsdump|crackmapexec|pass-the-hash|ntds\.dit|SAM.*export|hash.*dump|cred.*harvest)</field>
+    <description>MITRE T1592.001 – Gather Victim Identity Information: Credentials (LSASS/Mimikatz dumping)</description>
+    <mitre>
+      <id>T1592.001</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1586.002 - Compromise Accounts: Email Accounts -->
+<group name="local,sysmon,T1586">
+  <rule id="101586" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(gmail.*(?:hacked|compromised)|outlook.*password|office365.*login|aws.*credentials.*steal|azure.*account.*hijack|compromised.*email|email.*breach|phish.*credentials|o365.*brute|gmail.*2fa.*bypass)</field>
+    <description>MITRE T1586.002 – Compromise Accounts: Email Accounts (Gmail/O365/AWS credential theft)</description>
+    <mitre>
+      <id>T1586.002</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1584.001 - Compromise Infrastructure: SSH Accounts -->
+<group name="local,sysmon,T1584">
+  <rule id="101584" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|plink\.exe|putty\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(ssh.*(?:root|admin|test|ubuntu|ec2-user)|sshpass|hydra.*ssh|medusa.*ssh|nmap.*22.*-p|plink.*-ssh|putty.*-ssh.*-pw|brute.*ssh|rockyou.*ssh|authorized_keys.*steal)</field>
+    <description>MITRE T1584.001 – Compromise Infrastructure: SSH Accounts (SSH brute force/account takeover)</description>
+    <mitre>
+      <id>T1584.001</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1583.001 - Acquire Infrastructure: Domains -->
+<group name="local,sysmon,T1583">
+  <rule id="101583" level="13">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(godaddy|namecheap|domains.google|buy domain|register.*domain|whois.*register|new-domain|dynadot|domains.*purchase|GoDaddy.*signup|Namecheap.*checkout)</field>
+    <description>MITRE T1583.001 – Acquire Infrastructure: Domains (Domain registrar activity)</description>
+    <mitre>
+      <id>T1583.001</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1485 - Data Destruction -->
+<group name="local,sysmon,T1485">
+  <rule id="101485" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(del.*\/f.*\/q.*\/s|rmdir.*\/s.*\/q|cipher.*\/w|Remove-Item.*-Recurse.*-Force|sdelete.*\/p)</field>
+    <description>MITRE T1485 – Data Destruction (Mass delete/secure wipe)</description>
+    <mitre>
+      <id>T1485</id>
+    </mitre>
+  </rule>
+</group>
+
+
+
+<!-- T1557.001 - Adversary-in-the-Middle: LLMNR/NBT-NS Poisoning -->
+<group name="local,sysmon,T1557">
+  <rule id="101557" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(nbtstat.*-R|nbtstat.*-RR|nbtstat.*-A|llmnr|Responder|Inveigh|smbrelayx|ntlmrelayx|poison|Start-DnsSpoof|New-BadNetbios)</field>
+    <description>MITRE T1557.001 – Adversary-in-the-Middle: LLMNR/NBT-NS Poisoning (NBTSTAT cache poisoning)</description>
+    <mitre>
+      <id>T1557.001</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1620 - Reflective Code Loading (CMD Test Commands) -->
+<group name="local,sysmon,T1620">
+  <rule id="101620" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)cmd\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(powershell.*-e.*(Assembly\.Load|FromBase64String|Convert\.FromBase64String)|powershell.*IEX.*base64|rundll32.*javascript.*OpenURL|certutil.*-decode.*cmd.*\/c.*powershell|for.*\/f.*"tokens.*=.*"powershell.*-w hidden.*IEX|reflective|ReflectiveLoader|PELoader|Donut|shellcode.*(?:load|exec|inject))</field>
+    <description>MITRE T1620 – Reflective Code Loading (Advanced CMD triggered PowerShell reflection/memory load)</description>
+    <mitre>
+      <id>T1620</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1649 - Steal or Forge Authentication Certificates -->
+<group name="local,sysmon,T1649">
+  <rule id="101649" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|certutil\.exe)$</field>
+ <field name="win.eventdata.commandLine" type="pcre2">(?i)(-exportPFX|exportpfx|Export-PfxCertificate|certlm\.pfx|cert\.pfx)</field>
+    <description>MITRE T1649 – Steal or Forge Authentication Certificates (PFX export attempts)</description>
+    <mitre>
+      <id>T1649</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1571 - Non-Standard Port -->
+<group name="local,sysmon,T1571">
+  <rule id="101571" level="13">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe|netcat\.exe|nc\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(:4444|:8080|:9001|:1337|:31337|:5555|:6666|:9999|:10000|port\s4444|listen\s8080|nc\s-lp\s4444|nc\s.*4444|telnet.*localhost.*4444)</field>
+    <description>MITRE T1571 – Non-Standard Port (C2 over 4444/8080/9001/1337)</description>
+    <mitre>
+      <id>T1571</id>
+    </mitre>
+  </rule>
+</group>
+
+
+<!-- T1609 - Container Administration Command -->
+<group name="local,sysmon,T1609">
+  <rule id="101609" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(docker.*(?:exec|run|ps|images|container)|kubectl.*(?:exec|apply|create|run|scale)|podman.*(?:run|exec)|containerd.*(?:exec|run)|nerdctl.*(?:exec|run)|crictl.*(?:exec|run))</field>
+    <description>MITRE T1609 – Container Administration Command (Docker/Kubernetes abuse)</description>
+    <mitre>
+      <id>T1609</id>
+    </mitre>
+  </rule>
+</group>
+
+<!-- T1610 - Deploy Container -->
+<group name="local,sysmon,T1610">
+  <rule id="101610" level="14">
+    <if_group>sysmon</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)(cmd\.exe|powershell\.exe)$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(docker.*(?:create|start|run|deploy)|kubectl.*(?:run|create|apply|deploy)|podman.*(?:run|start)|ctr.*(?:run|create)|container.*(?:create|start|deploy)|nerdctl.*(?:run|deploy))</field>
+    <description>MITRE T1610 – Deploy Container (Docker/K8s container deployment)</description>
+    <mitre>
+      <id>T1610</id>
+    </mitre>
+  </rule>
+</group>
+
