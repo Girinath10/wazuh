@@ -1,5 +1,4 @@
-c/rules# cat simple_rule.xml 
-
+c/rules# cat simple_rule.xml
 
 <!-- T1620 - Reflective Code Loading (CMD Test Commands) -->
 <group name="local,sysmon,T1620">
