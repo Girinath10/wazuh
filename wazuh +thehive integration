@@ -1,4 +1,6 @@
-tuu:/var/ossec/integrations# cat custom-w2thive.py
+
+File 1: custom-w2thive.py 
+# cat /var/ossec/integrations/custom-w2thive.py 
 #!/var/ossec/framework/python/bin/python3
 
 import json
@@ -11,7 +13,6 @@ from thehive4py import TheHiveApi
 
 # ---------- USER CONFIG ----------
 lvl_threshold = 0
-suricata_lvl_threshold = 3
 debug_enabled = False
 info_enabled = True
 # ---------------------------------
@@ -38,6 +39,7 @@ logger.addHandler(fh)
 def main(args):
     alert_file = args[1]
     logger.info("Processing alert file: " + alert_file)
+
     api_key = args[2]
     hive_url = args[3]
 
@@ -53,29 +55,27 @@ def main(args):
 
             w_alert = json.loads(content)
 
-    except Exception:
+    except Exception as e:
+        logger.error("Invalid JSON: " + str(e))
         return
     # ------------------------------------
 
-    logger.info("Rule level: " + str(w_alert['rule']['level']))
+    # ---------- SAFE RULE LEVEL ----------
+    rule_level = int(w_alert.get("rule", {}).get("level", 0))
+    logger.info("Rule level: " + str(rule_level))
 
+    # ---------- FORMAT ----------
     alt = pr(w_alert, '', [])
     formatted = md_format(alt)
 
     artifacts_dict = artifact_detect(formatted)
     alert = generate_alert(formatted, artifacts_dict, w_alert)
 
-    # ---------- FILTER LOGIC ----------
-    if 'suricata' in w_alert['rule']['groups']:
-        if 'data' in w_alert and 'alert' in w_alert['data']:
-            if int(w_alert['data']['alert']['severity']) <= suricata_lvl_threshold:
-                logger.info("Sending Suricata alert to TheHive")
-                send_alert(alert, api)
-
-    elif int(w_alert['rule']['level']) >= lvl_threshold:
+    # ---------- FINAL FIX: SEND ALL ALERTS ----------
+    if "rule" in w_alert:
         logger.info("Sending Wazuh alert to TheHive")
         send_alert(alert, api)
-    # ----------------------------------
+    # ----------------------------------------------
 
 
 # ---------- JSON FLATTENER ----------
@@ -129,18 +129,15 @@ def generate_alert(desc, artifacts_dict, w_alert):
     source_ref = str(uuid.uuid4())[0:6]
     artifacts = []
 
-    if "agent" not in w_alert:
-        w_alert["agent"] = {"id": "none", "name": "none", "ip": "none"}
-
-    if "ip" not in w_alert["agent"]:
-        w_alert["agent"]["ip"] = "none"
+    agent_name = w_alert.get("agent", {}).get("name", "unknown")
+    agent_ip = w_alert.get("agent", {}).get("ip", "unknown")
 
     for key, values in artifacts_dict.items():
         for v in values:
             artifacts.append({"dataType": key, "data": v})
 
     return {
-        "title": w_alert["rule"]["description"],
+        "title": w_alert.get("rule", {}).get("description", "Wazuh Alert"),
         "description": desc,
         "type": "wazuh_alert",
         "source": "wazuh",
@@ -148,9 +145,9 @@ def generate_alert(desc, artifacts_dict, w_alert):
         "tlp": 2,
         "tags": [
             "wazuh",
-            "rule=" + w_alert["rule"]["id"],
-            "agent=" + w_alert["agent"]["name"],
-            "ip=" + w_alert["agent"]["ip"]
+            "rule=" + str(w_alert.get("rule", {}).get("id", "unknown")),
+            "agent=" + agent_name,
+            "ip=" + agent_ip
         ],
         "artifacts": artifacts
     }
@@ -170,7 +167,10 @@ if __name__ == "__main__":
     try:
         main(sys.argv)
     except Exception as e:
-        logger.exception("EGOR: " + str(e))
+        logger.exception("ERROR: " + str(e))
+
+
+
 --------------------------------------------------------------------------------------------------
 
 File 2: custom-w2thive 
